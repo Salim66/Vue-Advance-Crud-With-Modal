@@ -42,7 +42,13 @@
                     <img :src="'uploads/users/'+user.photo" alt="" />
                   </td>
                   <td>
-                    <a class="btn btn-sm btn-info" href="#">View</a>
+                    <a
+                      class="btn btn-sm btn-info"
+                      data-toggle="modal"
+                      href="#view_user_data"
+                      @click="use_view_details(user.id, $event)"
+                      >View</a
+                    >
                     <a class="btn btn-sm btn-warning" href="#">Edit</a>
                     <a class="btn btn-sm btn-danger" href="#">Delete</a>
                   </td>
@@ -117,6 +123,47 @@
           </div>
         </div>
       </div>
+      <!-- User data view modal -->
+      <div id="view_user_data" class="modal fade">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <table class="table table-striped">
+                <img
+                  :src="'uploads/users/'+view.photo"
+                  style="
+                    width: 150px;
+                    height: 150px;
+                    border: 5px solid #fff;
+                    border-radius: 50%;
+                    display: block;
+                    margin: auto;
+                  "
+                  class="shadow"
+                  alt=""
+                />
+                <h3 class="text-center mt-2">{{ view.name }}</h3>
+                <hr />
+                <tr>
+                  <td>Name</td>
+                  <td>{{ view.name }}</td>
+                </tr>
+                <tr>
+                  <td>Email</td>
+                  <td>{{ view.email }}</td>
+                </tr>
+                <tr>
+                  <td>Cell</td>
+                  <td>{{ view.cell }}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- JS FILES  -->
@@ -137,11 +184,18 @@
         data: {
           users: {
             name: "",
+            name: "",
             email: "",
             cell: "",
             photo: "",
           },
           add: {
+            name: "",
+            email: "",
+            cell: "",
+            photo: "",
+          },
+          view: {
             name: "",
             email: "",
             cell: "",
@@ -188,6 +242,14 @@
             } else {
               alert("All fields are required!");
             }
+          },
+          use_view_details: function (id, event) {
+            axios
+              .get("inc/user.php?action=view&id=" + id)
+              .then(function (response) {
+                // console.log(response.data);
+                root.view = response.data;
+              });
           },
         },
         created() {

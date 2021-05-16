@@ -48,3 +48,13 @@ if ($action == 'create') {
     //add user query
     $conn->query("INSERT INTO users (name, email, cell, photo) VALUES('$name', '$email', '$cell', '$photo_name')");
 }
+
+//when action value is view then show specific user details data 
+if ($action == 'view') {
+    $id = $_GET['id'];
+
+    //view specific user data
+    $data = $conn->query("SELECT * FROM users WHERE id='$id'");
+
+    echo json_encode($data->fetch_assoc());
+}
