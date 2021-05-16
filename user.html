@@ -49,7 +49,13 @@
                       @click="useViewDetails(user.id, $event)"
                       >View</a
                     >
-                    <a class="btn btn-sm btn-warning" href="#">Edit</a>
+                    <a
+                      class="btn btn-sm btn-warning"
+                      data-toggle="modal"
+                      href="#edit_user_data"
+                      @click="editUserData(user.id)"
+                      >Edit</a
+                    >
                     <a
                       class="btn btn-sm btn-danger"
                       data-toggle="modal"
@@ -191,6 +197,83 @@
           </div>
         </div>
       </div>
+      <!-- Edit user data modal -->
+      <div id="edit_user_data" class="modal fade">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>Edit user data</h3>
+              <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <form action="">
+                <div class="form-group">
+                  <input
+                    v-model="edit.id"
+                    style="display: none"
+                    class="form-control"
+                  />
+                  <label for="">Name</label>
+                  <input
+                    v-model="edit.name"
+                    type="text"
+                    class="form-control"
+                    placeholder="Name"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="">Email</label>
+                  <input
+                    v-model="edit.email"
+                    type="email"
+                    class="form-control"
+                    placeholder="Email"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="">Cell</label>
+                  <input
+                    v-model="edit.cell"
+                    type="text"
+                    class="form-control"
+                    placeholder="Cell"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="edit_photo" style="margin-right: 90px"
+                    ><i class="fas fa-file-image text-info fa-5x"></i
+                  ></label>
+                  <input
+                    ref="file"
+                    type="file"
+                    class="form-control-file"
+                    style="display: none"
+                    id="edit_photo"
+                    @change="editPhoto($event)"
+                  />
+                  <input type="hidden" v-model="edit.old_photo" />
+                  <img
+                    :src="'uploads/users/'+edit.photo"
+                    style="width: 200px"
+                    alt=""
+                  />
+                  <!-- when photo is conflict -->
+                  <img :src="edit.photo" style="width: 200px" alt="" />
+                </div>
+                <div class="form-group">
+                  <button
+                    type="submit"
+                    class="btn btn-sm btn-block btn-success mt-5"
+                    @click="updateUser()"
+                  >
+                    Update User
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- JS FILES  -->
@@ -228,6 +311,14 @@
             cell: "",
             photo: "",
           },
+          edit: {
+            id: "",
+            name: "",
+            email: "",
+            cell: "",
+            photo: "",
+            old_photo: "",
+          },
         },
         methods: {
           getAllUsers: function () {
@@ -239,6 +330,10 @@
           addPhoto: function (event) {
             let user_photo = URL.createObjectURL(event.target.files[0]);
             root.add.photo = user_photo;
+          },
+          editPhoto: function (event) {
+            let user_photo = URL.createObjectURL(event.target.files[0]);
+            root.edit.photo = user_photo;
           },
           addNewUser: function () {
             if (
@@ -286,6 +381,46 @@
                 console.log(response.data);
                 root.getAllUsers();
               });
+          },
+          editUserData: function (id) {
+            axios
+              .get("inc/user.php?action=edit&id=" + id)
+              .then(function (response) {
+                // console.log(response.data);
+                root.edit = response.data;
+                root.edit.old_photo = response.data.photo;
+              });
+          },
+          updateUser: function () {
+            if (
+              root.edit.name != "" ||
+              root.edit.email != "" ||
+              root.edit.cell != ""
+            ) {
+              //get photo from lorm
+              root.edit.photo = root.$refs.file.files[0];
+
+              //all data bind into formdata
+              let userData = new FormData();
+
+              userData.append("id", root.edit.id);
+              userData.append("name", root.edit.name);
+              userData.append("email", root.edit.email);
+              userData.append("cell", root.edit.cell);
+              userData.append("photo", root.edit.photo);
+              userData.append("old_photo", root.edit.old_photo);
+
+              axios
+                .post("inc/user.php?action=update", userData, {
+                  headers: {
+                    "Content-Type": "multipart/form-data",
+                  },
+                })
+                .then(function (response) {
+                  // alert(response.data);
+                  this.getAllUsers();
+                });
+            }
           },
         },
         created() {

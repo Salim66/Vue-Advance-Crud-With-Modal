@@ -53,7 +53,7 @@ if ($action == 'create') {
 if ($action == 'view') {
     $id = $_GET['id'];
 
-    //view specific user data
+    //find specific user data query
     $data = $conn->query("SELECT * FROM users WHERE id='$id'");
 
     echo json_encode($data->fetch_assoc());
@@ -65,4 +65,35 @@ if ($action == 'delete') {
 
     //delete specific user data query
     $conn->query("DELETE FROM users WHERE id='$id'");
+}
+
+//when action value is edit then show sigle user details form
+if ($action == 'edit') {
+    $id = $_GET['id'];
+
+    //find specific user data query
+    $data = $conn->query("SELECT * FROM users WHERE id='$id'");
+
+    echo json_encode($data->fetch_assoc());
+}
+
+//when action value is update then specific user data updated
+if ($action == 'update') {
+    //get values
+    $id = $_POST['id'];
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $cell = $_POST['cell'];
+    $old_photo = $_POST['old_photo'];
+
+    $photo_name = '';
+    if (!empty($_FILES['photo'])) {
+        //upload photo function with validataion
+        $photo_data = fileUpload($_FILES['photo'], '../uploads/users/', ['jpg', 'jpeg', 'png', 'gif']);
+        $photo_name = $photo_data['file_name'];
+    } else {
+        $photo_name = $old_photo;
+    }
+
+    $conn->query("UPDATE users SET name ='$name', email='$email', cell='$cell', photo='$photo_name' WHERE id='$id'");
 }
