@@ -39,10 +39,7 @@
                   <td>{{ user.email }}</td>
                   <td>{{ user.cell }}</td>
                   <td>
-                    <img
-                      src="assets/media/img/pp_photo/istockphoto-615279718-612x612.jpg"
-                      alt=""
-                    />
+                    <img :src="'uploads/users/'+user.photo" alt="" />
                   </td>
                   <td>
                     <a class="btn btn-sm btn-info" href="#">View</a>
@@ -97,6 +94,7 @@
                     ><i class="fas fa-file-image text-info fa-5x"></i
                   ></label>
                   <input
+                    ref="file"
                     type="file"
                     class="form-control-file"
                     style="display: none"
@@ -109,6 +107,7 @@
                   <button
                     type="submit"
                     class="btn btn-sm btn-block btn-success mt-5"
+                    @click="addNewUser()"
                   >
                     Add User
                   </button>
@@ -152,13 +151,35 @@
         methods: {
           getAllUsers: function () {
             axios.get("inc/user.php?action=read").then(function (response) {
-              console.log(response.data);
+              //   console.log(response.data);
               root.users = response.data;
             });
           },
           addPhoto: function (event) {
             let user_photo = URL.createObjectURL(event.target.files[0]);
             root.add.photo = user_photo;
+          },
+          addNewUser: function () {
+            //get photo from form
+            root.add.photo = root.$refs.file.files[0];
+
+            //all data get by form
+            let userData = new FormData();
+
+            userData.append("name", this.add.name);
+            userData.append("email", this.add.email);
+            userData.append("cell", this.add.cell);
+            userData.append("photo", this.add.photo);
+
+            axios
+              .post("inc/user.php?action=create", userData, {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              })
+              .then(function (response) {
+                // alert(response.data);
+              });
           },
         },
         created() {
