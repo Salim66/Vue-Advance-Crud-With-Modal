@@ -58,3 +58,11 @@ if ($action == 'view') {
 
     echo json_encode($data->fetch_assoc());
 }
+
+//when action value is delete then delete specific user data
+if ($action == 'delete') {
+    $id = $_GET['id'];
+
+    //delete specific user data query
+    $conn->query("DELETE FROM users WHERE id='$id'");
+}

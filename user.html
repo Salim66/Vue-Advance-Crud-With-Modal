@@ -46,11 +46,17 @@
                       class="btn btn-sm btn-info"
                       data-toggle="modal"
                       href="#view_user_data"
-                      @click="use_view_details(user.id, $event)"
+                      @click="useViewDetails(user.id, $event)"
                       >View</a
                     >
                     <a class="btn btn-sm btn-warning" href="#">Edit</a>
-                    <a class="btn btn-sm btn-danger" href="#">Delete</a>
+                    <a
+                      class="btn btn-sm btn-danger"
+                      data-toggle="modal"
+                      href="#delete_user_data"
+                      @click="useViewDetails(user.id, $event)"
+                      >Delete</a
+                    >
                   </td>
                 </tr>
               </tbody>
@@ -164,6 +170,27 @@
           </div>
         </div>
       </div>
+      <!-- Delete user data modal -->
+      <div id="delete_user_data" class="modal fade">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-body text-center">
+              <h6>Are you sure ? you want to delete {{ view.name }}!</h6>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-sm btn-secondary" data-dismiss="modal">
+                Cancel
+              </button>
+              <button
+                class="btn btn-sm btn-danger"
+                @click="deleteUserData(view.id)"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- JS FILES  -->
@@ -238,17 +265,26 @@
                 })
                 .then(function (response) {
                   // alert(response.data);
+                  root.getAllUsers();
                 });
             } else {
               alert("All fields are required!");
             }
           },
-          use_view_details: function (id, event) {
+          useViewDetails: function (id, event) {
             axios
               .get("inc/user.php?action=view&id=" + id)
               .then(function (response) {
                 // console.log(response.data);
                 root.view = response.data;
+              });
+          },
+          deleteUserData: function (id) {
+            axios
+              .get("inc/user.php?action=delete&id=" + id)
+              .then(function (response) {
+                console.log(response.data);
+                root.getAllUsers();
               });
           },
         },
