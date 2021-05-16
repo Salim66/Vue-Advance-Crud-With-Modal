@@ -1,8 +1,8 @@
 <?php
+require_once '../app/db.php';
+require_once '../app/function.php';
 
 
-// Server Connection
-$conn = new mysqli('localhost', 'root', '', 'vue-advance-crud');
 
 //get user data
 $data = json_decode(file_get_contents('php://input'));
@@ -34,12 +34,16 @@ if ($action == 'create') {
     $email = $_POST['email'];
     $cell = $_POST['cell'];
 
-    //get file
-    $photo_name = $_FILES['photo']['name'];
-    $photo_tmp_name = $_FILES['photo']['tmp_name'];
+    // //get file
+    // $photo_name = $_FILES['photo']['name'];
+    // $photo_tmp_name = $_FILES['photo']['tmp_name'];
 
-    //move file into folder
-    move_uploaded_file($photo_tmp_name, '../uploads/users/' . $photo_name);
+    // //move file into folder
+    // move_uploaded_file($photo_tmp_name, '../uploads/users/' . $photo_name);
+
+    //upload photo function with validataion
+    $photo_data = fileUpload($_FILES['photo'], '../uploads/users/', ['jpg', 'jpeg', 'png', 'gif']);
+    $photo_name = $photo_data['file_name'];
 
     //add user query
     $conn->query("INSERT INTO users (name, email, cell, photo) VALUES('$name', '$email', '$cell', '$photo_name')");
