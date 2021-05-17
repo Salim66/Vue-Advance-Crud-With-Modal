@@ -21,6 +21,15 @@
         <div class="card shadow">
           <div class="card-body">
             <h2>All Data</h2>
+            <!-- search user  -->
+            <input
+              @keyup="searchUser()"
+              v-model="search"
+              type="text"
+              class="form-control-sm"
+              placeholder="Search User"
+              style="float: right; margin-bottom: 10px; width: 200px"
+            />
             <table class="table table-striped">
               <thead>
                 <tr>
@@ -28,6 +37,8 @@
                   <th>Name</th>
                   <th>Email</th>
                   <th>Cell</th>
+                  <th>Gender</th>
+                  <th>Location</th>
                   <th>Photo</th>
                   <th>Action</th>
                 </tr>
@@ -38,6 +49,8 @@
                   <td>{{ user.name }}</td>
                   <td>{{ user.email }}</td>
                   <td>{{ user.cell }}</td>
+                  <td>{{ user.gender }}</td>
+                  <td>{{ user.location }}</td>
                   <td>
                     <img :src="'uploads/users/'+user.photo" alt="" />
                   </td>
@@ -108,11 +121,51 @@
                   />
                 </div>
                 <div class="form-group">
+                  <label for="" style="margin-right: 20px">Gender</label>
+                  <div class="custom-control custom-radio d-inline">
+                    <input
+                      v-model="add.gender"
+                      type="radio"
+                      name="gender"
+                      value="Male"
+                      class="custom-control-input"
+                      id="Male"
+                    /><label
+                      for="Male"
+                      style="margin-right: 10px"
+                      class="custom-control-label"
+                      >Male</label
+                    >
+                  </div>
+
+                  <div class="custom-control custom-radio d-inline">
+                    <input
+                      v-model="add.gender"
+                      type="radio"
+                      name="gender"
+                      class="custom-control-input"
+                      value="Female"
+                      id="Female"
+                    /><label for="Female" class="custom-control-label"
+                      >Female</label
+                    >
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="">Location</label>
+                  <input
+                    v-model="add.location"
+                    type="text"
+                    class="form-control"
+                    placeholder="Location"
+                  />
+                </div>
+                <div class="form-group">
                   <label for="user_photo" style="margin-right: 90px"
                     ><i class="fas fa-file-image text-info fa-5x"></i
                   ></label>
                   <input
-                    ref="file"
+                    ref="fphoto"
                     type="file"
                     class="form-control-file"
                     style="display: none"
@@ -181,7 +234,21 @@
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-body text-center">
-              <h6>Are you sure ? you want to delete {{ view.name }}!</h6>
+              <img
+                :src="'uploads/users/'+view.photo"
+                class="shadow-lg avatar"
+                style="
+                  width: 60px;
+                  height: 60px;
+                  border: 5px solid rgb(21, 189, 35);
+                  border-radius: 50%;
+                "
+                alt=""
+                onerror="this.src='check3.jpg';"
+              />
+              <h6 class="my-2">
+                Are you sure ? you want to delete {{ view.name }}!
+              </h6>
             </div>
             <div class="modal-footer">
               <button class="btn btn-sm btn-secondary" data-dismiss="modal">
@@ -190,6 +257,7 @@
               <button
                 class="btn btn-sm btn-danger"
                 @click="deleteUserData(view.id)"
+                data-dismiss="modal"
               >
                 OK
               </button>
@@ -237,6 +305,46 @@
                     type="text"
                     class="form-control"
                     placeholder="Cell"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="" style="margin-right: 20px">Gender</label>
+                  <div class="custom-control custom-radio d-inline">
+                    <input
+                      v-model="edit.gender"
+                      type="radio"
+                      name="ugender"
+                      value="Male"
+                      class="custom-control-input"
+                      id="UMale"
+                    /><label
+                      for="UMale"
+                      style="margin-right: 10px"
+                      class="custom-control-label"
+                      >Male</label
+                    >
+                  </div>
+
+                  <div class="custom-control custom-radio d-inline">
+                    <input
+                      v-model="edit.gender"
+                      type="radio"
+                      name="ugender"
+                      class="custom-control-input"
+                      value="Female"
+                      id="UFemale"
+                    /><label for="UFemale" class="custom-control-label"
+                      >Female</label
+                    >
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="">Location</label>
+                  <input
+                    v-model="edit.location"
+                    type="text"
+                    class="form-control"
+                    placeholder="Location"
                   />
                 </div>
                 <div class="form-group">
@@ -294,15 +402,18 @@
         data: {
           users: {
             name: "",
-            name: "",
             email: "",
             cell: "",
+            gender: "",
+            location: "",
             photo: "",
           },
           add: {
             name: "",
             email: "",
             cell: "",
+            gender: "",
+            location: "",
             photo: "",
           },
           view: {
@@ -316,9 +427,12 @@
             name: "",
             email: "",
             cell: "",
+            gender: "",
+            location: "",
             photo: "",
             old_photo: "",
           },
+          search: "",
         },
         methods: {
           getAllUsers: function () {
@@ -339,10 +453,12 @@
             if (
               root.add.name != "" ||
               root.add.email != "" ||
-              root.add.cell != ""
+              root.add.cell != "" ||
+              root.add.gender != "" ||
+              root.add.location != ""
             ) {
               //get photo from form
-              root.add.photo = root.$refs.file.files[0];
+              root.add.photo = root.$refs.fphoto.files[0];
 
               //all data get by form
               let userData = new FormData();
@@ -350,6 +466,8 @@
               userData.append("name", this.add.name);
               userData.append("email", this.add.email);
               userData.append("cell", this.add.cell);
+              userData.append("gender", this.add.gender);
+              userData.append("location", this.add.location);
               userData.append("photo", this.add.photo);
 
               axios
@@ -395,7 +513,9 @@
             if (
               root.edit.name != "" ||
               root.edit.email != "" ||
-              root.edit.cell != ""
+              root.edit.cell != "" ||
+              root.edit.gender != "" ||
+              root.edit.location != ""
             ) {
               //get photo from lorm
               root.edit.photo = root.$refs.file.files[0];
@@ -407,6 +527,8 @@
               userData.append("name", root.edit.name);
               userData.append("email", root.edit.email);
               userData.append("cell", root.edit.cell);
+              userData.append("gender", root.edit.gender);
+              userData.append("location", root.edit.location);
               userData.append("photo", root.edit.photo);
               userData.append("old_photo", root.edit.old_photo);
 
@@ -421,6 +543,14 @@
                   this.getAllUsers();
                 });
             }
+          },
+          searchUser: function () {
+            axios
+              .get("inc/user.php?action=search&search=" + root.search)
+              .then(function (response) {
+                // console.log(response.data);
+                root.users = response.data;
+              });
           },
         },
         created() {

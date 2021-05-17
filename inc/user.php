@@ -33,6 +33,8 @@ if ($action == 'create') {
     $name = $_POST['name'];
     $email = $_POST['email'];
     $cell = $_POST['cell'];
+    $gender = $_POST['gender'];
+    $location = $_POST['location'];
 
     // //get file
     // $photo_name = $_FILES['photo']['name'];
@@ -46,7 +48,7 @@ if ($action == 'create') {
     $photo_name = $photo_data['file_name'];
 
     //add user query
-    $conn->query("INSERT INTO users (name, email, cell, photo) VALUES('$name', '$email', '$cell', '$photo_name')");
+    $conn->query("INSERT INTO users (name, email, cell, gender, location, photo) VALUES('$name', '$email', '$cell', '$gender', '$location', '$photo_name')");
 }
 
 //when action value is view then show specific user details data 
@@ -84,6 +86,8 @@ if ($action == 'update') {
     $name = $_POST['name'];
     $email = $_POST['email'];
     $cell = $_POST['cell'];
+    $gender = $_POST['gender'];
+    $location = $_POST['location'];
     $old_photo = $_POST['old_photo'];
 
     $photo_name = '';
@@ -95,5 +99,21 @@ if ($action == 'update') {
         $photo_name = $old_photo;
     }
 
-    $conn->query("UPDATE users SET name ='$name', email='$email', cell='$cell', photo='$photo_name' WHERE id='$id'");
+    $conn->query("UPDATE users SET name ='$name', email='$email', cell='$cell', gender='$gender', location='$location', photo='$photo_name' WHERE id='$id'");
+}
+
+//when action value is search then search specific data
+if ($action == 'search') {
+    $search = $_GET['search'];
+
+    //real time search user data
+    $all_data = $conn->query("SELECT * FROM users WHERE name LIKE '%$search%' OR email LIKE '%$search%' OR cell LIKE '%$search%'");
+
+    $data = [];
+
+    while ($user = $all_data->fetch_assoc()) {
+        array_push($data, $user);
+    }
+
+    echo json_encode($data);
 }
