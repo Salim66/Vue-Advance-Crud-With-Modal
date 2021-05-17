@@ -152,3 +152,19 @@ if ($action == 'search_gender') {
 
     echo json_encode($data);
 }
+
+//when action value is search_location then search specific data
+if ($action == 'search_location') {
+    $search = $_GET['search_location'];
+
+    //real time search user data
+    $all_data = $conn->query("SELECT * FROM users WHERE location LIKE '$search%' ORDER BY id DESC");
+
+    $data = [];
+
+    while ($user = $all_data->fetch_assoc()) {
+        array_push($data, $user);
+    }
+
+    echo json_encode($data);
+}

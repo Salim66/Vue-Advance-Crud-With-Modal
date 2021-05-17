@@ -37,7 +37,7 @@
                 v-model="search_gender"
                 class="form-control form-control-sm"
               >
-                <option value="">Select Gender</option>
+                <option value="" disabled selected>Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
@@ -47,16 +47,18 @@
               style="display: inline; float: right; width: 200px"
               class="mx-2"
             >
-              <select
+              <input
                 @change="searchByLocation()"
                 v-model="search_location"
-                class="form-control form-control-sm"
-              >
-                <option value="">Select Location</option>
-                <option :value="user.location" v-for="user in users">
-                  {{ user.location }}
-                </option>
-              </select>
+                type="text"
+                class="form-control-sm"
+                placeholder="Search Location"
+                style="float: right; margin-bottom: 10px; width: 200px"
+                list="location"
+              />
+              <datalist id="location" class="form-control form-control-sm">
+                <option :value="user.location" v-for="user in users"></option>
+              </datalist>
             </div>
 
             <table class="table table-striped">
@@ -598,6 +600,17 @@
               .get(
                 "inc/user.php?action=search_gender&search_gender=" +
                   root.search_gender
+              )
+              .then(function (response) {
+                // console.log(response.data);
+                root.users = response.data;
+              });
+          },
+          searchByLocation: function () {
+            axios
+              .get(
+                "inc/user.php?action=search_location&search_location=" +
+                  root.search_location
               )
               .then(function (response) {
                 // console.log(response.data);
