@@ -100,11 +100,20 @@ if ($action == 'update') {
     $location = $_POST['location'];
     $old_photo = $_POST['old_photo'];
 
+    //find specific user because when i am update photo than old photo has been delete from directory
+    $data = $conn->query("SELECT * FROM users WHERE id='$id'");
+
     $photo_name = '';
     if (!empty($_FILES['photo'])) {
         //upload photo function with validataion
         $photo_data = fileUpload($_FILES['photo'], '../uploads/users/', ['jpg', 'jpeg', 'png', 'gif']);
         $photo_name = $photo_data['file_name'];
+        //user photo unlink when user data photo update
+        while ($user = $data->fetch_assoc()) {
+            if (!empty($user['photo'])) {
+                unlink('../uploads/users/' . $user['photo']);
+            }
+        }
     } else {
         $photo_name = $old_photo;
     }
