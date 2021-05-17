@@ -142,7 +142,7 @@ if ($action == 'search_gender') {
     $search = $_GET['search_gender'];
 
     //real time search user data
-    $all_data = $conn->query("SELECT * FROM users WHERE gender LIKE '%$search%' ORDER BY id DESC");
+    $all_data = $conn->query("SELECT * FROM users WHERE gender LIKE '$search%' ORDER BY id DESC");
 
     $data = [];
 

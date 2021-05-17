@@ -42,6 +42,22 @@
                 <option value="Female">Female</option>
               </select>
             </div>
+            <!-- Search user location wise -->
+            <div
+              style="display: inline; float: right; width: 200px"
+              class="mx-2"
+            >
+              <select
+                @change="searchByLocation()"
+                v-model="search_location"
+                class="form-control form-control-sm"
+              >
+                <option value="">Select Location</option>
+                <option :value="user.location" v-for="user in users">
+                  {{ user.location }}
+                </option>
+              </select>
+            </div>
 
             <table class="table table-striped">
               <thead>
@@ -457,6 +473,7 @@
           },
           search: "",
           search_gender: "",
+          search_location: "",
         },
         methods: {
           getAllUsers: function () {
