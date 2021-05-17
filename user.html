@@ -33,7 +33,7 @@
             <!-- Search user male or female -->
             <div style="display: inline; float: right" class="mx-2">
               <select
-                @change="searchByGender()"
+                @change="searchByGenderAndLocation()"
                 v-model="search_gender"
                 class="form-control form-control-sm"
               >
@@ -48,7 +48,7 @@
               class="mx-2"
             >
               <input
-                @change="searchByLocation()"
+                @change="searchByGenderAndLocation()"
                 v-model="search_location"
                 type="text"
                 class="form-control-sm"
@@ -595,28 +595,39 @@
                 root.users = response.data;
               });
           },
-          searchByGender: function () {
+          searchByGenderAndLocation: function () {
+            let searchData = new FormData();
+            searchData.append("gender", root.search_gender);
+            searchData.append("location", root.search_location);
             axios
-              .get(
-                "inc/user.php?action=search_gender&search_gender=" +
-                  root.search_gender
-              )
+              .post("inc/user.php?action=multiple", searchData)
               .then(function (response) {
-                // console.log(response.data);
                 root.users = response.data;
+                // console.log(response.data);
               });
           },
-          searchByLocation: function () {
-            axios
-              .get(
-                "inc/user.php?action=search_location&search_location=" +
-                  root.search_location
-              )
-              .then(function (response) {
-                // console.log(response.data);
-                root.users = response.data;
-              });
-          },
+          // searchByGender: function () {
+          //   axios
+          //     .get(
+          //       "inc/user.php?action=search_gender&search_gender=" +
+          //         root.search_gender
+          //     )
+          //     .then(function (response) {
+          //       // console.log(response.data);
+          //       root.users = response.data;
+          //     });
+          // },
+          // searchByLocation: function () {
+          //   axios
+          //     .get(
+          //       "inc/user.php?action=search_location&search_location=" +
+          //         root.search_location
+          //     )
+          //     .then(function (response) {
+          //       // console.log(response.data);
+          //       root.users = response.data;
+          //     });
+          // },
         },
         created() {
           this.getAllUsers();
