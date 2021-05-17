@@ -224,6 +224,14 @@
                   <td>Cell</td>
                   <td>{{ view.cell }}</td>
                 </tr>
+                <tr>
+                  <td>Gender</td>
+                  <td>{{ view.gender }}</td>
+                </tr>
+                <tr>
+                  <td>Location</td>
+                  <td>{{ view.location }}</td>
+                </tr>
               </table>
             </div>
           </div>
@@ -420,6 +428,8 @@
             name: "",
             email: "",
             cell: "",
+            gender: "",
+            location: "",
             photo: "",
           },
           edit: {
@@ -496,7 +506,7 @@
             axios
               .get("inc/user.php?action=delete&id=" + id)
               .then(function (response) {
-                console.log(response.data);
+                // console.log(response.data);
                 root.getAllUsers();
               });
           },

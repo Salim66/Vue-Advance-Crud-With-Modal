@@ -65,6 +65,16 @@ if ($action == 'view') {
 if ($action == 'delete') {
     $id = $_GET['id'];
 
+    //find specific user data query
+    $data = $conn->query("SELECT * FROM users WHERE id='$id'");
+
+    //user photo unlink when user data delete
+    while ($user = $data->fetch_assoc()) {
+        if (!empty($user['photo'])) {
+            unlink('../uploads/users/' . $user['photo']);
+        }
+    }
+
     //delete specific user data query
     $conn->query("DELETE FROM users WHERE id='$id'");
 }
