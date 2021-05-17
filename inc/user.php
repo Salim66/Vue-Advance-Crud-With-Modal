@@ -136,3 +136,19 @@ if ($action == 'search') {
 
     echo json_encode($data);
 }
+
+//when action value is search_gender then search specific data
+if ($action == 'search_gender') {
+    $search = $_GET['search_gender'];
+
+    //real time search user data
+    $all_data = $conn->query("SELECT * FROM users WHERE gender LIKE '%$search%' ORDER BY id DESC");
+
+    $data = [];
+
+    while ($user = $all_data->fetch_assoc()) {
+        array_push($data, $user);
+    }
+
+    echo json_encode($data);
+}

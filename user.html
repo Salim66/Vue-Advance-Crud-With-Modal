@@ -21,7 +21,7 @@
         <div class="card shadow">
           <div class="card-body">
             <h2>All Data</h2>
-            <!-- search user  -->
+            <!-- search user by search box  -->
             <input
               @keyup="searchUser()"
               v-model="search"
@@ -30,6 +30,19 @@
               placeholder="Search User"
               style="float: right; margin-bottom: 10px; width: 200px"
             />
+            <!-- Search user male or female -->
+            <div style="display: inline; float: right" class="mx-2">
+              <select
+                @change="searchByGender()"
+                v-model="search_gender"
+                class="form-control form-control-sm"
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+
             <table class="table table-striped">
               <thead>
                 <tr>
@@ -443,6 +456,7 @@
             old_photo: "",
           },
           search: "",
+          search_gender: "",
         },
         methods: {
           getAllUsers: function () {
@@ -557,6 +571,17 @@
           searchUser: function () {
             axios
               .get("inc/user.php?action=search&search=" + root.search)
+              .then(function (response) {
+                // console.log(response.data);
+                root.users = response.data;
+              });
+          },
+          searchByGender: function () {
+            axios
+              .get(
+                "inc/user.php?action=search_gender&search_gender=" +
+                  root.search_gender
+              )
               .then(function (response) {
                 // console.log(response.data);
                 root.users = response.data;
