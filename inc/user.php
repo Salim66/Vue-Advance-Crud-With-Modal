@@ -137,6 +137,19 @@ if ($action == 'search') {
     echo json_encode($data);
 }
 
+//when action value is read_loaction then get all user location data
+if ($action == 'read_loaction') {
+    //get all location query
+    $data = $conn->query("SELECT location FROM users GROUP BY location");
+
+    $all_data = [];
+    while ($user = $data->fetch_assoc()) {
+        array_push($all_data, $user);
+    }
+
+    echo json_encode($all_data);
+}
+
 // //when action value is search_gender then search specific data
 // if ($action == 'search_gender') {
 //     $search = $_GET['search_gender'];

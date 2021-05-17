@@ -57,7 +57,10 @@
                 list="location"
               />
               <datalist id="location" class="form-control form-control-sm">
-                <option :value="user.location" v-for="user in users"></option>
+                <option
+                  :value="user.location"
+                  v-for="user in locations"
+                ></option>
               </datalist>
             </div>
 
@@ -473,6 +476,7 @@
             photo: "",
             old_photo: "",
           },
+          locations: "",
           search: "",
           search_gender: "",
           search_location: "",
@@ -587,6 +591,14 @@
                 });
             }
           },
+          getAllLocation: function () {
+            axios
+              .get("inc/user.php?action=read_loaction")
+              .then(function (response) {
+                // console.log(response.data);
+                root.locations = response.data;
+              });
+          },
           searchUser: function () {
             axios
               .get("inc/user.php?action=search&search=" + root.search)
@@ -631,6 +643,7 @@
         },
         created() {
           this.getAllUsers();
+          this.getAllLocation();
         },
       });
     </script>
